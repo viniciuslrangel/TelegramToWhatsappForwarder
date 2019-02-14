@@ -6,7 +6,7 @@
 <script>
 export default {
   name: 'telegram-to-whatsapp-forwarder'
-};
+}
 </script>
 
 <style lang="scss">
