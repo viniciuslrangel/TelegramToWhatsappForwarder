@@ -26,6 +26,7 @@ module.exports = {
     'semi': [2, 'never'],
     'comma-dangle': 0,
     'no-underscore-dangle': 0,
+    'class-methods-use-this': 0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }
