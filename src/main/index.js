@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, ipcMain } from 'electron' // eslint-disable-line
+import setupWorker from './telegram/worker'
 
 /**
  * Set `__static` path to static files in production
@@ -16,7 +17,7 @@ const winURL = isDev
   ? 'http://localhost:9080'
   : `file://${__dirname}/index.html`
 
-function createWindow() {
+function appReady() {
   /**
    * Initial window options
    */
@@ -31,9 +32,11 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  ipcMain.on('READY', setupWorker)
 }
 
-app.on('ready', createWindow)
+app.on('ready', appReady)
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -43,7 +46,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (mainWindow === null) {
-    createWindow()
+    appReady()
   }
 })
 

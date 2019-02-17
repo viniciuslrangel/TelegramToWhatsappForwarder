@@ -9,9 +9,11 @@ const api = {
 }
 
 export const STATUS = Object.freeze({
-  LOGIN_SUCCESS: 0,
-  WAITING_CODE: 1,
-  ERROR: 2
+  NONE: -1,
+  WAITING_LOGIN: 0, // this is the default value
+  LOGIN_SUCCESS: 1,
+  WAITING_CODE: 2,
+  ERROR: 3
 })
 
 export default class TelegramClient {
@@ -33,6 +35,7 @@ export default class TelegramClient {
       this.client.registerCallback('td:error', error => console.error(error))
       /* eslint-enable no-console */
     }
+    this.stateCallback = () => {}
     this.client.ready.then(() => this.stateCallback(STATUS.LOGIN_SUCCESS))
   }
 
@@ -96,5 +99,9 @@ export default class TelegramClient {
       this._codeCallback(code)
       delete this._codeCallback
     }
+  }
+
+  destroy() {
+    return this.client._destroy()
   }
 }
