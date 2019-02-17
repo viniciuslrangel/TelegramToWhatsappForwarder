@@ -1,0 +1,12 @@
+{
+    "eslint.validate": [
+        "javascript",
+        "html",
+        "vue"
+    ],
+    "eslint.enable": true,
+    "editor.detectIndentation": true,
+    "eslint.autoFixOnSave": true,
+    "vetur.format.defaultFormatter.js": "prettier-eslint",
+    "files.eol": "\n"
+}
