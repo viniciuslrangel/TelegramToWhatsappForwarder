@@ -1,5 +1,7 @@
 <template lang="pug">
-    h1 ERROR
+    div
+        h1 ERROR
+        h3 {{ this.$store.state.Telegram.additional || '' }}
 </template>
 
 <script>
