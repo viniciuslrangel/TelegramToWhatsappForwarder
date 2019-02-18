@@ -4,7 +4,7 @@ import {
 } from 'tglib'
 
 const api = {
-  appId: 736927,
+  apiId: '736927',
   apiHash: 'd46fc613e06362d96df73308b4a6e7e4'
 }
 
@@ -28,57 +28,50 @@ export default class TelegramClient {
         value: phone
       }
     })
-    this.client.registerCallback('td:getInput', this._getInput)
+    this.stateCallback = () => {}
+
+    this.client.registerCallback('td:getInput', (...args) => this._getInput(...args))
+    this.client.registerCallback('td:error', error => this.stateCallback(STATUS.ERROR, error.message))
+
+
     if (process.env.NODE_ENV !== 'production') {
       /* eslint-disable no-console */
-      this.client.registerCallback('td:update', update => console.log(update))
-      this.client.registerCallback('td:error', error => console.error(error))
+      this.client.registerCallback('td:update', update => console.log('[Update]', update))
+      const errCalback = this.client.callbacks['td:error']
+      this.client.registerCallback('td:error', (error) => { console.error(error); errCalback(error) })
       /* eslint-enable no-console */
     }
-    this.stateCallback = () => {}
     this.client.ready.then(() => this.stateCallback(STATUS.LOGIN_SUCCESS))
   }
 
-  // eslint-disable-next-line no-unused-vars
-  async _getInput({
-    type,
-    string,
-    extras: {
-      hint
-    } = {}
-  }) {
+  async _getInput({ type, string }) {
     if (type === 'input') {
       let status = null
+      let msg
       switch (string) {
         case 'AuthorizationAuthCodeInput':
           status = STATUS.WAITING_CODE
           break
         case 'AuthorizationFirstNameInput':
           status = STATUS.ERROR
+          msg = 'ACCOUNT NOT REGISTERED'
           break
         default:
           break
       }
       if (status !== null) {
-        return new Promise((resolve) => {
+        const p = new Promise((resolve) => {
           this._codeCallback = resolve
-          this.stateCallback(status)
         })
+        this.stateCallback(status, msg)
+        return p
       }
     }
     if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
-      console.log(`%cTelegram %c${type}[${string}]${hint != null ? `<${hint}>` : ''}`, 'color: orange;', 'color: red;')
+      console.log(`Telegram [${type}]${string}`)
     }
     return null
-  }
-
-  /**
-   * @param {Function<number, void>} callback
-   * @see STATUS
-   */
-  setStateCallback(callback) {
-    this.stateCallback = callback
   }
 
   /**
