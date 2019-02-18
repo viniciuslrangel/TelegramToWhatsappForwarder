@@ -5,7 +5,8 @@ import TelegramClient, { STATUS } from '.'
 let client
 
 function updateClient() {
-  const { phone } = store.state.Telegram
+  // eslint-disable-next-line prefer-destructuring
+  const phone = store.state.Telegram.phone
   if (client != null) {
     client.destroy()
     client = null
@@ -14,13 +15,20 @@ function updateClient() {
     store.dispatch('Telegram/updateState', { state: STATUS.WAITING_LOGIN })
     return
   }
-  client = new TelegramClient(phone)
-  client.setStateCallback((state) => {
-    store.dispatch('Telegram/updateState', { state })
-  })
+  client = new TelegramClient(phone.replace(/[^\d]/g, ''))
+  client.stateCallback = (state, payload) => {
+    store.dispatch('Telegram/updateState', { state, payload })
+  }
 }
 
-export default () => {
-  ipcMain.on('CREATE_CLIENT', updateClient)
-  updateClient()
-}
+store.subscribe((mutation) => {
+  if (mutation.type === 'Telegram/UPDATE_PHONE') {
+    updateClient()
+  } else if (mutation.type === 'Telegram/UPDATE_CODE') {
+    if (client != null) {
+      client.sendAuthCode(mutation.payload)
+    }
+  }
+})
+
+export default updateClient

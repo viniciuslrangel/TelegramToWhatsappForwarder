@@ -48,7 +48,8 @@ export function setupRouterManager() {
   this.$store.subscribe((mutation) => {
     if (mutation.type === 'Telegram/UPDATE_STATE') {
       let r
-      switch (mutation.payload) {
+      const { phoneState } = mutation.payload
+      switch (phoneState) {
         case STATUS.WAITING_LOGIN:
         case STATUS.WAITING_CODE:
           r = 'signin-telegram'
