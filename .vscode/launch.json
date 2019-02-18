@@ -9,6 +9,14 @@
             "request": "attach",
             "name": "Attach",
             "port": 5858,
+            "timeout": 20000,
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Launch & Attach",
+            "port": 5858,
+            "timeout": 20000,
             "preLaunchTask": "npm: dev"
         }
     ]
