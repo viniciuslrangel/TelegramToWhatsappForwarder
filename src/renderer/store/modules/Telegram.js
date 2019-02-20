@@ -10,9 +10,6 @@ const mutations = {
   UPDATE_PHONE(state, phone) {
     state.phone = phone
   },
-  UPDATE_CODE(state, code) {
-    state.code = code
-  },
   UPDATE_STATE(state, { phoneState, payload }) {
     state.state = phoneState
     state.additional = payload
@@ -22,9 +19,6 @@ const mutations = {
 const actions = {
   registerPhone({ commit }, { phone }) {
     commit('UPDATE_PHONE', phone)
-  },
-  saveCode({ commit }, { code }) {
-    commit('UPDATE_CODE', code)
   },
   updateState({ commit }, { state, payload }) {
     commit('UPDATE_STATE', { phoneState: state, payload })

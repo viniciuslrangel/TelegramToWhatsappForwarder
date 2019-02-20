@@ -52,6 +52,7 @@ export function setupRouterManager() {
       switch (phoneState) {
         case STATUS.WAITING_LOGIN:
         case STATUS.WAITING_CODE:
+        case STATUS.WAITING_PASSWD:
           r = 'signin-telegram'
           break
         case STATUS.ERROR:
@@ -60,7 +61,9 @@ export function setupRouterManager() {
         default:
           r = 'loading'
       }
-      this.$router.replace({ name: r })
+      if (this.$route.name !== r) {
+        this.$router.replace({ name: r })
+      }
     }
   })
 }

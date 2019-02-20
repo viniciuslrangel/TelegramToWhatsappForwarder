@@ -24,10 +24,18 @@ function updateClient() {
 store.subscribe((mutation) => {
   if (mutation.type === 'Telegram/UPDATE_PHONE') {
     updateClient()
-  } else if (mutation.type === 'Telegram/UPDATE_CODE') {
-    if (client != null) {
-      client.sendAuthCode(mutation.payload)
-    }
+  }
+})
+
+ipcMain.on('Telegram/CODE', (event, arg) => {
+  if (client != null) {
+    client.sendAuthCode(arg)
+  }
+})
+
+ipcMain.on('Telegram/PASSWD', (event, arg) => {
+  if (client != null) {
+    client.sendPasswordCode(arg)
   }
 })
 

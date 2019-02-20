@@ -11,9 +11,10 @@ const api = {
 export const STATUS = Object.freeze({
   NONE: -1,
   WAITING_LOGIN: 0, // this is the default value
-  LOGIN_SUCCESS: 1,
-  WAITING_CODE: 2,
-  ERROR: 3
+  WAITING_CODE: 1,
+  WAITING_PASSWD: 2,
+  LOGIN_SUCCESS: 3,
+  ERROR: 4
 })
 
 export default class TelegramClient {
@@ -31,13 +32,15 @@ export default class TelegramClient {
     this.stateCallback = () => {}
 
     this.client.registerCallback('td:getInput', (...args) => this._getInput(...args))
+    this.client.registerCallback('td:update', (...args) => this._update(...args))
     this.client.registerCallback('td:error', error => this.stateCallback(STATUS.ERROR, error.message))
 
 
     if (process.env.NODE_ENV !== 'production') {
       /* eslint-disable no-console */
-      this.client.registerCallback('td:update', update => console.log('[Update]', update))
-      const errCalback = this.client.callbacks['td:error']
+      const updateCalback = this.client.callbacks['td:update'] || (() => {})
+      this.client.registerCallback('td:update', (update) => { console.log('[Update]', update); updateCalback(update) })
+      const errCalback = this.client.callbacks['td:error'] || (() => {})
       this.client.registerCallback('td:error', (error) => { console.error(error); errCalback(error) })
       /* eslint-enable no-console */
     }
@@ -45,6 +48,10 @@ export default class TelegramClient {
   }
 
   async _getInput({ type, string }) {
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log(`Telegram [${type}]${string}`)
+    }
     if (type === 'input') {
       let status = null
       let msg
@@ -66,13 +73,16 @@ export default class TelegramClient {
         this.stateCallback(status, msg)
         return p
       }
-    }
-    if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
-      console.log(`Telegram [${type}]${string}`)
+    } else if (type === 'password' && string === 'AuthorizationPasswordInput') {
+      return new Promise((resolve) => {
+        this._passwdCallback = resolve
+        this.stateCallback(STATUS.WAITING_PASSWD)
+      })
     }
     return null
   }
+
+  _update(args) {} // eslint-disable-line
 
   /**
    * @param {Function<Object, void>} callback
@@ -91,6 +101,16 @@ export default class TelegramClient {
     if (this._codeCallback !== undefined) {
       this._codeCallback(code)
       delete this._codeCallback
+    }
+  }
+
+  /**
+   * @param {string} password
+   */
+  sendPasswordCode(password) {
+    if (this._passwdCallback !== undefined) {
+      this._passwdCallback(password)
+      delete this._passwdCallback
     }
   }
 
