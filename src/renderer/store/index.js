@@ -10,7 +10,11 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   modules,
   plugins: [
-    createPersistedState(),
+    createPersistedState({
+      paths: [
+        'Telegram.phone'
+      ],
+    }),
     createSharedMutations(),
   ],
   strict: process.env.NODE_ENV !== 'production',

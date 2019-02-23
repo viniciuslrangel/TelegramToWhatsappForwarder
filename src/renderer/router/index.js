@@ -9,8 +9,12 @@ const routes = new Router({
   routes: [
     {
       path: '/',
-      name: 'landing-page',
-      component: require('@/components/LandingPage').default,
+      redirect: '/loading'
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: require('@/components/Home').default
     },
     {
       path: '/loading',
@@ -63,6 +67,17 @@ export function setupRouterManager() {
       }
       if (this.$route.name !== r) {
         this.$router.replace({ name: r })
+      }
+    } else if (mutation.type === 'Whatsapp/SET_LOGGED') {
+      const logged = mutation.payload
+      let name
+      if (logged) {
+        name = 'home'
+      } else {
+        name = 'loading'
+      }
+      if (this.$route.name !== name) {
+        this.$router.replace({ name })
       }
     }
   })

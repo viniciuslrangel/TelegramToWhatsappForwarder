@@ -12,12 +12,17 @@ function updateClient() {
     client = null
   }
   if (phone == null) {
-    store.dispatch('Telegram/updateState', { state: STATUS.WAITING_LOGIN })
+    store.dispatch('Telegram/updateState', {
+      state: STATUS.WAITING_LOGIN
+    })
     return
   }
   client = new TelegramClient(phone.replace(/[^\d]/g, ''))
   client.stateCallback = (state, payload) => {
-    store.dispatch('Telegram/updateState', { state, payload })
+    store.dispatch('Telegram/updateState', {
+      state,
+      payload
+    })
   }
 }
 
@@ -25,6 +30,10 @@ store.subscribe((mutation) => {
   if (mutation.type === 'Telegram/UPDATE_PHONE') {
     updateClient()
   }
+})
+
+ipcMain.on('Telegram/CREATE', () => {
+  updateClient()
 })
 
 ipcMain.on('Telegram/CODE', (event, arg) => {
@@ -38,5 +47,3 @@ ipcMain.on('Telegram/PASSWD', (event, arg) => {
     client.sendPasswordCode(arg)
   }
 })
-
-export default updateClient

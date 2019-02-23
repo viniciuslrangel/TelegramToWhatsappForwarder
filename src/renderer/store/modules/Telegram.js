@@ -13,6 +13,9 @@ const mutations = {
   UPDATE_STATE(state, { phoneState, payload }) {
     state.state = phoneState
     state.additional = payload
+  },
+  CLEAR_ADDITIONAL(state) {
+    state.additional = null
   }
 }
 
@@ -22,6 +25,9 @@ const actions = {
   },
   updateState({ commit }, { state, payload }) {
     commit('UPDATE_STATE', { phoneState: state, payload })
+  },
+  clearAdditional({ commit }) {
+    commit('CLEAR_ADDITIONAL')
   }
 }
 

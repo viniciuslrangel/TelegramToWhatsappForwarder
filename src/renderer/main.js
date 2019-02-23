@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron' // eslint-disable-line
+// import { ipcRenderer } from 'electron' // eslint-disable-line
 
 import Vue from 'vue'
 import Element from 'element-ui'
@@ -25,6 +25,6 @@ new Vue({
   template: '<App/>',
   created() {
     setupRouterManager.bind(this)()
-    ipcRenderer.send('READY')
+    // ipcRenderer.send('READY')
   }
 }).$mount('#app')

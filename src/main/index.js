@@ -1,5 +1,8 @@
-import { app, BrowserWindow, ipcMain } from 'electron' // eslint-disable-line
-import setupWorker from './telegram/worker'
+import { app, BrowserWindow } from 'electron' // eslint-disable-line
+import { setMainApp } from './wpp/worker'
+
+// Require for side effects
+require('./telegram/worker')
 
 /**
  * Set `__static` path to static files in production
@@ -32,8 +35,7 @@ function appReady() {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
-
-  ipcMain.on('READY', setupWorker)
+  setMainApp(mainWindow)
 }
 
 app.on('ready', appReady)

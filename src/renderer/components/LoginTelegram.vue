@@ -12,6 +12,8 @@
         h3 Password
         el-input(v-model="password" type="password")
         el-button(@click="sendPasswd" :disabled="this.password.length < 2")
+        span {{ (this.additional || {}).hint || '' }}
+        span(style="color: red;" v-if="(this.additional || {}).retry === true") Try again
 </template>
 
 <script>
@@ -33,7 +35,7 @@ export default {
     codeEnable() {
       return this.$store.state.Telegram.state !== STATUS.WAITING_CODE
     },
-    ...mapState('Telegram', ['state'])
+    ...mapState('Telegram', ['state', 'additional'])
   },
   methods: {
     login() {
@@ -43,6 +45,7 @@ export default {
       ipcRenderer.send('Telegram/CODE', this.code)
     },
     sendPasswd() {
+      this.$store.dispatch('Telegram/clearAdditional')
       ipcRenderer.send('Telegram/PASSWD', this.password)
     }
   },
