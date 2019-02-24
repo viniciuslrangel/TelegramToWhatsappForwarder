@@ -4,6 +4,15 @@ import TelegramClient, { STATUS } from '.'
 
 let client
 
+function refreshChat() {
+  if (client == null) {
+    return
+  }
+  client.getChats().then((c) => {
+    store.dispatch('Telegram/setPhoneList', c)
+  })
+}
+
 function updateClient() {
   // eslint-disable-next-line prefer-destructuring
   const phone = store.state.Telegram.phone
@@ -24,6 +33,7 @@ function updateClient() {
       payload
     })
   }
+  client.client.ready.then(refreshChat)
 }
 
 store.subscribe((mutation) => {

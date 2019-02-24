@@ -3,7 +3,9 @@ import { STATUS } from '../../../main/telegram'
 const state = {
   phone: null,
   state: STATUS.NONE,
-  additional: null
+  additional: null,
+  phoneList: [],
+  activeList: [],
 }
 
 const mutations = {
@@ -16,6 +18,12 @@ const mutations = {
   },
   CLEAR_ADDITIONAL(state) {
     state.additional = null
+  },
+  SET_PHONE_LIST(state, phoneList) {
+    state.phoneList = phoneList
+  },
+  SET_ACTIVE_PHONES(state, activeList) {
+    state.activeList = activeList
   }
 }
 
@@ -28,6 +36,12 @@ const actions = {
   },
   clearAdditional({ commit }) {
     commit('CLEAR_ADDITIONAL')
+  },
+  setPhoneList({ commit }, phoneList) {
+    commit('SET_PHONE_LIST', phoneList)
+  },
+  setActivePhones({ commit }, activeList) {
+    commit('SET_ACTIVE_PHONES', activeList)
   }
 }
 

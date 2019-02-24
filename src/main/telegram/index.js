@@ -127,6 +127,10 @@ export default class TelegramClient {
     }
   }
 
+  getChats() {
+    return this.client.tg.getAllChats()
+  }
+
   logout() {
     fs.rmdirSync(path.resolve(__dirname, '__tglib__'))
   }
