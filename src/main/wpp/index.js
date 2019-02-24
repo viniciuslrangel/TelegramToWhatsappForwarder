@@ -16,10 +16,11 @@ export default class WhatsAppClient {
     this._didLoad = false
     this._loadCallback = () => {}
     this.win.webContents.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36')
-    this.win.loadURL('https://web.whatsapp.com/')
+    this.win.webContents.setAudioMuted(true)
     this.win.webContents.on('did-finish-load', () => {
       this._loadCallback()
     })
+    this.win.loadURL('https://web.whatsapp.com/')
   }
 
   _js(...args) {
