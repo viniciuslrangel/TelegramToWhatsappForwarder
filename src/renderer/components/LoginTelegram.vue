@@ -7,7 +7,7 @@
         el-form
           el-form-item
             span.item(slot="label") Phone Number
-            el-input(v-model="phone" v-mask="['+## (##) ####-####', '+## (##) #####-####']" placeholder="+55 99 999999999")
+            el-input(v-model="phone" v-on:keyup.enter="login" v-mask="['+## (##) ####-####', '+## (##) #####-####']" placeholder="+55 99 999999999")
               el-button(slot="append" @click="login" :disabled="phone.length < 8") Login
 
       el-collapse-transition
@@ -15,7 +15,7 @@
           el-form
             el-form-item
               span.item(slot="label") Code
-              el-input(v-model="code" :disabled="codeEnable" placeholder="123456" maxlength="5")
+              el-input(v-model="code" v-on:keyup.enter="sendCode" :disabled="codeEnable" placeholder="123456" maxlength="5")
                 el-button(slot="append" @click="sendCode" :disabled="this.code.length !== 5") Continue
 
       el-collapse-transition
@@ -23,7 +23,7 @@
           el-form
             el-form-item
               span.item(slot="label") Password
-              el-input(v-model="password" type="password" placeholder="••••••")
+              el-input(v-model="password" v-on:keyup.enter="sendPasswd" type="password" placeholder="••••••")
                 el-button(slot="append" @click="sendPasswd" :disabled="this.password.length < 2") Continue
               span {{ (this.additional || {}).hint || '' }}
               span(style="color: red;" v-if="(this.additional || {}).retry === true") Try again
@@ -31,9 +31,9 @@
 
 <script>
 
-	import {ipcRenderer} from 'electron' // eslint-disable-line
-	import {mapState} from 'vuex'
-	import {STATUS} from '../../main/telegram'
+	import { ipcRenderer } from 'electron' // eslint-disable-line
+	import { mapState } from 'vuex'
+	import { STATUS } from '../../main/telegram'
 
 	export default {
   data() {
