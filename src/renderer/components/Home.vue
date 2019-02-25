@@ -1,21 +1,20 @@
 <template lang="pug">
-  div
-    h1 HOMEEE
-    el-row(v-if="errList.length > 0")
-      h4 Não foi possivel enviar a ultima mensagem para:
-      .list-item(v-for="name in errList" :key="name")
-      | {{ name }}
-    el-row(type="flex" justify="space-between")
-      el-col(:span='10')
-        h1.left Telegram
-        el-card(v-for="phone in phoneList" :key="phone.id" shadow="hover")
-          el-switch(:active-text="phone.title" @input="(value) => leftInput(value, phone)" :value="activeList.findIndex(e => e.id == phone.id) !== -1")
-      el-col(:span='10')
-        h1.right Whatsapp
-        div
-          el-card(v-for="phone in wppPhoneList" :key="phone" shadow="hover")
-            el-switch(:active-text="phone" @input="(value) => rightInput(value, phone)" :value="wppActiveList.indexOf(phone) !== -1")
+  .parent
+    .split
+      el-container
+        el-header.header Telegram
+        el-main
+          el-card.card(v-for="phone in phoneList" :key="phone.id" shadow="hover")
+            el-switch(:active-text="phone.title" @input="(value) => leftInput(value, phone)" :value="using[phone.id]")
+
+    .split
+      el-container
+        el-header.header Whatsapp
+        el-main
+          el-card.card(v-for="phone in wppUsers" :key="phone" shadow="hover")
+            el-switch.text(:active-text="phone" @input="(value) => rightInput(value, phone)" :value="wppUsing[phone]")
 </template>
+
 <script>
 
 import { ipcRenderer } from 'electron' // eslint-disable-line
@@ -78,14 +77,45 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="sass">
+  $border-size: 8px
 
-.left {
-  text-align: left;
-}
+  .parent
+    display: flex
 
-.right {
-  text-align: right
-}
+  .split
+    width: calc(50vw - #{$border-size * 2} - .5px)
+
+    &:first-child
+      border-right: $border-size #003d33 solid
+    &:last-child
+      border-left: $border-size #003d33 solid
+
+    .card
+      border: none
+      background-color: #33685c
+      color: #fff
+      margin-bottom: .5em
+
+      span
+        color: #fff !important
+        font-size: 14px
+
+  .el-switch__core
+    background-color: transparent
+
+  .header
+    background-color: #003d33
+    color: #ffffff
+    text-align: center
+    line-height: 60px
+    font-family: 'Righteous', cursive
+    font-size: 1.7em
+
+  .left
+    text-align: left
+
+  .right
+    text-align: right
 
 </style>
