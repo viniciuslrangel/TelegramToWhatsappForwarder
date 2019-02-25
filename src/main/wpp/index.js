@@ -39,7 +39,8 @@ export default class WhatsAppClient {
     return this.win.destroy()
   }
 
-  isLogged() {
+  async isLogged() {
+    await this.waitReady()
     return new Promise(resolve => session.defaultSession.cookies.get({ domain: 'web.whatsapp.com' }, (err, cookies) => {
       resolve(cookies.length !== 0)
     }))
@@ -53,7 +54,7 @@ export default class WhatsAppClient {
     this.win.hide()
   }
 
-  waitLogin() {
+  async waitLogin() {
     return new Promise((resolve) => {
       const i = setInterval(async () => {
         if (await this.isLogged()) {
@@ -89,11 +90,13 @@ export default class WhatsAppClient {
 
   async listUsers() {
     await this.waitReady()
+    /* eslint-disable no-useless-escape */
     return this._js(`
       Array.from(document.getElementById('pane-side').firstChild.firstChild.firstChild.children)
-        .sort((a, b) => a.style.transform.match(/\\d/)[0] - b.style.transform.match(/\\d/)[0])
+        .sort((a, b) => a.style.transform.match(/\d/)[0] - b.style.transform.match(/\d/)[0])
         .map(e => e.firstChild.firstChild.children[1].firstChild.firstChild.innerText.slice(0, -1))
     `)
+    /* eslint-enable no-useless-escape */
   }
 }
 

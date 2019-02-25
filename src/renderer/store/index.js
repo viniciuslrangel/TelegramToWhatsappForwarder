@@ -11,11 +11,12 @@ export default new Vuex.Store({
   modules,
   plugins: [
     createPersistedState({
-      paths: [
-        'Telegram.phone',
-        'Telegram.activeList',
-        'Whatsapp.activeList'
-      ],
+      storageName: 'TelegramToWhatsappForwarder',
+      whitelist: [
+        'Telegram/UPDATE_PHONE',
+        'Telegram/SET_ACTIVE_PHONES',
+        'Whatsapp/SET_ACTIVE'
+      ]
     }),
     createSharedMutations(),
   ],
