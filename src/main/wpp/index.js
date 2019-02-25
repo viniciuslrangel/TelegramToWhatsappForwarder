@@ -63,6 +63,38 @@ export default class WhatsAppClient {
       }, 300)
     })
   }
+
+  waitReady() {
+    return this._js(`
+    new Promise((resolve) => {
+      let i = setInterval(() => {
+            try {
+                let el = document.querySelector("div[data-animate-modal-popup=true]")
+                if (el != null) {
+                    el.firstChild.children[1].children[1].click()
+                    return
+                }
+                el = document.getElementById('pane-side')
+                console.log(el)
+                if (el == null) {
+                    return
+                }
+                clearInterval(i)
+                resolve()
+            } catch(e) {}
+      }, 300)
+    })
+    `)
+  }
+
+  async listUsers() {
+    await this.waitReady()
+    return this._js(`
+      Array.from(document.getElementById('pane-side').firstChild.firstChild.firstChild.children)
+        .sort((a, b) => a.style.transform.match(/\\d/)[0] - b.style.transform.match(/\\d/)[0])
+        .map(e => e.firstChild.firstChild.children[1].firstChild.firstChild.innerText.slice(0, -1))
+    `)
+  }
 }
 
 export function setMainApp(app) {
