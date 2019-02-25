@@ -9,21 +9,18 @@ export default {
 }
 </script>
 
-<style lang="scss">
-// body {
-//   background-color: #ff00ff;
-//   div {
-//     background-color: #00ff00;
-//     color: black;
-//   }
-// }
-* {
-  user-select: none;
-  cursor: default;
-}
+<style lang="sass">
+  @import url('https://fonts.googleapis.com/css?family=Righteous')
 
-input {
-  cursor: auto;
-}
+  body
+    margin: 0
+    background-color: #004d40
 
+  *
+    font-family: 'Roboto', sans-serif
+    user-select: none
+    cursor: default
+
+  input
+    cursor: auto
 </style>
