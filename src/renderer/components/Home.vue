@@ -2,18 +2,26 @@
   div
     h1 HOMEEE
     el-row(type="flex" justify="space-between")
-      el-col.vertScroll(:span='6')
+      el-col(:span='10')
+        h1.left Telegram
         el-card(v-for="phone in phoneList" :key="phone.id" shadow="hover")
           el-switch(:active-text="phone.title" @input="(value) => leftInput(value, phone)" :value="using[phone.id]")
-      el-col(:span='6')
-        | RIGHT
+      el-col(:span='10')
+        h1.right Whatsapp
+        div
+          el-card(v-for="phone in wppUsers" :key="phone" shadow="hover")
+            el-switch(:active-text="phone" @input="(value) => rightInput(value, phone)" :value="wppUsing[phone]")
 </template>
 <script>
+
+import { ipcRenderer } from 'electron' // eslint-disable-line
 
 export default {
   data() {
     return {
-      using: {}
+      using: {},
+      wppUsers: [],
+      wppUsing: {},
     }
   },
   computed: {
@@ -32,7 +40,7 @@ export default {
           }
           return 0
         })
-    }
+    },
   },
   methods: {
     leftInput(value, phone) {
@@ -45,13 +53,43 @@ export default {
       this.$data.using = Object.assign({}, this.$data.using)
       const { phoneList } = this.$store.state.Telegram
       this.$store.dispatch('Telegram/setActivePhones', phoneList.filter(e => this.$data.using[e.id]))
+    },
+    rightInput(value, phone) {
+      if (value) {
+        this.$data.wppUsing[phone] = true
+      } else {
+        delete this.$data.wppUsing[phone]
+      }
+      this.$data.wppUsing = Object.assign({}, this.$data.wppUsing)
+      // TODO wppUsers dispatch
+    },
+    refreshWpp() {
+      ipcRenderer.send('Whatsapp/LIST_USERS')
+    },
+    receiveWpp(event, users) {
+      this.$data.wppUsers = users
     }
+  },
+  created() {
+    ipcRenderer.on('Whatsapp/USER_RESPONSE', this.receiveWpp)
+  },
+  mounted() {
+    this.refreshWpp()
+  },
+  beforeDestroy() {
+    ipcRenderer.removeListener('Whatsapp/USER_RESPONSE', this.receiveWpp)
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.vertScroll {
-  overflow-y: auto;
+
+.left {
+  text-align: left;
 }
+
+.right {
+  text-align: right
+}
+
 </style>

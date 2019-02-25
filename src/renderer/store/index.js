@@ -12,7 +12,9 @@ export default new Vuex.Store({
   plugins: [
     createPersistedState({
       paths: [
-        'Telegram.phone'
+        'Telegram.phone',
+        'Telegram.activeList',
+        'Whatsapp.activeList'
       ],
     }),
     createSharedMutations(),

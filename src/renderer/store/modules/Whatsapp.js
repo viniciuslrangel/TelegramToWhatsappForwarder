@@ -1,5 +1,6 @@
 const state = {
   logged: false,
+  activeList: []
 }
 
 const mutations = {
