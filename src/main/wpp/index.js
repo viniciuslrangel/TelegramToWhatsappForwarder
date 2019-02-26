@@ -15,7 +15,6 @@ export default class WhatsAppClient {
     })
     this._didLoad = false
     this._loadCallback = () => {}
-    this.win.webContents.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36')
     this.win.webContents.setAudioMuted(true)
     this.win.webContents.on('did-finish-load', () => {
       this._loadCallback()
@@ -66,26 +65,44 @@ export default class WhatsAppClient {
   }
 
   waitReady() {
-    return this._js(`
-    new Promise((resolve) => {
-      let i = setInterval(() => {
-            try {
-                let el = document.querySelector("div[data-animate-modal-popup=true]")
-                if (el != null) {
-                    el.firstChild.children[1].children[1].click()
-                    return
-                }
-                el = document.getElementById('pane-side')
-                console.log(el)
-                if (el == null) {
-                    return
-                }
-                clearInterval(i)
-                resolve()
-            } catch(e) {}
-      }, 300)
+    return new Promise((resolve) => {
+      this._js(`
+        new Promise((resolve, reject) => {
+          let i = setInterval(() => {
+                try {
+                    let el = document.querySelector("#window .window-body .window-text .action")
+                    if (el != null) {
+                      resolve(false)
+                      clearInterval(i)
+                      return
+                    }
+                    el = document.querySelector("div[data-animate-modal-popup=true]")
+                    if (el != null) {
+                        el.firstChild.children[1].children[1].click()
+                        return
+                    }
+                    el = document.getElementById('pane-side')
+                    if (el == null) {
+                        return
+                    }
+                    clearInterval(i)
+                    resolve(true)
+                } catch(e) {}
+          }, 300)
+        })
+      `).then((e) => {
+        if (e) {
+          resolve()
+        } else {
+          this.win.webContents.session.clearStorageData({
+            storages: ['appcache', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']
+          }, () => {
+            this.win.reload()
+            this.waitReady().then(() => resolve())
+          })
+        }
+      })
     })
-    `)
   }
 
   async listUsers() {
@@ -93,7 +110,7 @@ export default class WhatsAppClient {
     /* eslint-disable no-useless-escape */
     return this._js(`
       Array.from(document.getElementById('pane-side').firstChild.firstChild.firstChild.children)
-        .sort((a, b) => a.style.transform.match(/\d/)[0] - b.style.transform.match(/\d/)[0])
+        .sort((a, b) => a.style.transform.match(/\\d/)[0] - b.style.transform.match(/\\d/)[0])
         .map(e => e.firstChild.firstChild.children[1].firstChild.firstChild.innerText.slice(0, -1))
     `)
     /* eslint-enable no-useless-escape */

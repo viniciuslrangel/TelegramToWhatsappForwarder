@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron' // eslint-disable-line
+import { app, BrowserWindow, session } from 'electron' // eslint-disable-line
 import { setMainApp } from './wpp/worker'
 
 // Require for side effects
@@ -21,6 +21,11 @@ const winURL = isDev
   : `file://${__dirname}/index.html`
 
 function appReady() {
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    details.requestHeaders['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'
+    callback({ cancel: false, requestHeaders: details.requestHeaders })
+  })
+
   /**
    * Initial window options
    */
