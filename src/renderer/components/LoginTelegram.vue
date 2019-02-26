@@ -7,16 +7,16 @@
         el-form
           el-form-item
             span.item(slot="label") Phone Number
-            el-input(v-model="phone" v-on:keyup.enter="login" v-mask="['+## (##) ####-####', '+## (##) #####-####']" placeholder="+55 99 999999999")
-              el-button(slot="append" @click="login" :disabled="phone.length < 8") Login
+            el-input(v-model="phone" v-on:keyup.enter="login" :disabled="this.state > this.STATUS.WAITING_LOGIN" v-mask="['+## (##) ####-####', '+## (##) #####-####']" placeholder="+55 99 999999999")
+              el-button(slot="append" @click="login" :disabled="phone.length < 8 || this.state > this.STATUS.WAITING_LOGIN") Login
 
       el-collapse-transition
         el-card.card(body-style={padding: "0 20px"} v-if="this.state >= this.STATUS.WAITING_CODE")
           el-form
             el-form-item
               span.item(slot="label") Code
-              el-input(v-model="code" v-on:keyup.enter="sendCode" :disabled="codeEnable" placeholder="123456" maxlength="5")
-                el-button(slot="append" @click="sendCode" :disabled="this.code.length !== 5") Continue
+              el-input(v-model="code" v-on:keyup.enter="sendCode" :disabled="this.state > this.STATUS.WAITING_CODE" placeholder="123456" maxlength="5")
+                el-button(slot="append" @click="sendCode" :disabled="this.code.length !== 5 || this.state > this.STATUS.WAITING_CODE") Continue
 
       el-collapse-transition
         el-card.card(v-if="this.state >= this.STATUS.WAITING_PASSWD")
@@ -45,9 +45,6 @@
     }
   },
   computed: {
-    codeEnable() {
-      return this.$store.state.Telegram.state !== STATUS.WAITING_CODE
-    },
     ...mapState('Telegram', ['state', 'additional'])
   },
   methods: {

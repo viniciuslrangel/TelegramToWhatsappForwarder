@@ -4,15 +4,11 @@
 
 <script>
 import { ipcRenderer } from 'electron' // eslint-disable-line
-import { STATUS } from '../../main/telegram'
+// import { STATUS } from '../../main/telegram'
 
 export default {
-  created() {
+  mounted() {
     ipcRenderer.send('Telegram/CREATE')
-    if (this.$store.state.Telegram.state !== STATUS.LOGIN_SUCCESS) {
-      return
-    }
-    ipcRenderer.send('Whatsapp/CREATE')
   }
 }
 </script>

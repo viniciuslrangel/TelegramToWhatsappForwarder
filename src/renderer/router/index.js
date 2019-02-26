@@ -1,3 +1,4 @@
+import { ipcRenderer } from 'electron' // eslint-disable-line
 import Vue from 'vue'
 import Router from 'vue-router'
 
@@ -62,6 +63,9 @@ export function setupRouterManager() {
         case STATUS.ERROR:
           r = 'error-telegram'
           break
+        case STATUS.LOGIN_SUCCESS:
+          ipcRenderer.send('Whatsapp/CREATE')
+        // eslint-disable-next-line no-fallthrough
         default:
           r = 'loading'
       }
