@@ -61,7 +61,7 @@ export default {
         delete this.$data.wppUsing[phone]
       }
       this.$data.wppUsing = Object.assign({}, this.$data.wppUsing)
-      // TODO wppUsers dispatch
+      this.$store.dispatch('Whatsapp/setActive', this.$data.wppUsing)
     },
     refreshWpp() {
       ipcRenderer.send('Whatsapp/LIST_USERS')
