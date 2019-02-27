@@ -31,6 +31,7 @@ export default class TelegramClient {
         value: phone
       }
     })
+    this._messageCallback = () => {}
     this.stateCallback = () => {}
 
     this.client.registerCallback('td:getInput', (...args) => this._getInput(...args))
@@ -101,7 +102,9 @@ export default class TelegramClient {
       if (is_outgoing) {
         return
       }
-      console.log('>>>>>>>>>>>>>>>>>>>>>', chat_id, text)
+      if (text != null) {
+        this._messageCallback(chat_id, text)
+      }
     }
   }
 

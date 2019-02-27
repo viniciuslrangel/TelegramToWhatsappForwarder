@@ -30,13 +30,15 @@ ipcMain.on('Whatsapp/CREATE', () => {
   updateClient()
 })
 
-ipcMain.on('Whatsapp/LIST_USERS', (event) => {
+ipcMain.on('Whatsapp/LIST_USERS', () => {
   if (client == null) {
-    event.sender.send('Whatsapp/USER_RESPONSE', [])
     return
   }
   client.listUsers().then((r) => {
-    event.sender.send('Whatsapp/USER_RESPONSE', r)
+    store.dispatch('Whatsapp/setPhoneList', r)
   })
 })
 
+export function sendMessage(msg) {
+  console.log(msg)
+}

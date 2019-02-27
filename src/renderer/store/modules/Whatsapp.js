@@ -1,5 +1,6 @@
 const state = {
   logged: false,
+  phoneList: [],
   activeList: []
 }
 
@@ -9,6 +10,9 @@ const mutations = {
   },
   SET_ACTIVE(state, activeList) {
     state.activeList = activeList
+  },
+  SET_PHONE_LIST(state, phoneList) {
+    state.phoneList = phoneList
   }
 }
 
@@ -18,7 +22,10 @@ const actions = {
   },
   setActive({ commit }, activeList) {
     commit('SET_ACTIVE', activeList)
-  }
+  },
+  setPhoneList({ commit }, phoneList) {
+    commit('SET_PHONE_LIST', phoneList)
+  },
 }
 
 export default {

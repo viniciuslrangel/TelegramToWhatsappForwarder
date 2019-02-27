@@ -9,7 +9,7 @@
       el-col(:span='10')
         h1.right Whatsapp
         div
-          el-card(v-for="phone in wppUsers" :key="phone" shadow="hover")
+          el-card(v-for="phone in wppPhoneList" :key="phone" shadow="hover")
             el-switch(:active-text="phone" @input="(value) => rightInput(value, phone)" :value="wppUsing[phone]")
 </template>
 <script>
@@ -20,7 +20,6 @@ export default {
   data() {
     return {
       using: {},
-      wppUsers: [],
       wppUsing: {},
     }
   },
@@ -41,6 +40,9 @@ export default {
           return 0
         })
     },
+    wppPhoneList() {
+      return this.$store.state.Whatsapp.phoneList
+    }
   },
   methods: {
     leftInput(value, phone) {
@@ -51,7 +53,7 @@ export default {
         delete this.$data.using[phone.id]
       }
       this.$data.using = Object.assign({}, this.$data.using)
-      const { phoneList } = this.$store.state.Telegram
+      const { phoneList } = this
       this.$store.dispatch('Telegram/setActivePhones', phoneList.filter(e => this.$data.using[e.id]))
     },
     rightInput(value, phone) {
@@ -70,14 +72,8 @@ export default {
       this.$data.wppUsers = users
     }
   },
-  created() {
-    ipcRenderer.on('Whatsapp/USER_RESPONSE', this.receiveWpp)
-  },
   mounted() {
     this.refreshWpp()
-  },
-  beforeDestroy() {
-    ipcRenderer.removeListener('Whatsapp/USER_RESPONSE', this.receiveWpp)
   }
 }
 </script>
