@@ -14,7 +14,15 @@ export default class WhatsAppClient {
       }
     })
     this._didLoad = false
-    this._loadCallback = () => {}
+    this._loadCallback = () => {
+      this._js(`
+      const eventFire = (el, etype) => {
+        const evt = document.createEvent('MouseEvents')
+        evt.initMouseEvent(etype, true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+        el.dispatchEvent(evt)
+      }
+      `)
+    }
     this.win.webContents.setAudioMuted(true)
     this.win.webContents.on('did-finish-load', () => {
       this._loadCallback()
@@ -30,7 +38,11 @@ export default class WhatsAppClient {
     if (this._didLoad) {
       callback()
     } else {
-      this._loadCallback = callback
+      const oldCallback = this._loadCallback
+      this._loadCallback = () => {
+        oldCallback()
+        callback()
+      }
     }
   }
 
@@ -51,6 +63,31 @@ export default class WhatsAppClient {
 
   hide() {
     this.win.hide()
+  }
+
+  selectChat(title) {
+    return this._js(`
+      (() => {
+        for (e of Array.from(document.getElementById('pane-side').firstChild.firstChild.firstChild.children)) {
+          if (e.innerText.split('\\n')[0] === '${title.replace(/'/g, "\\'")}') {
+            eventFire(e.firstChild.firstChild, 'mousedown')
+            return
+          }
+        }
+        throw null
+      })()
+    `)
+  }
+
+  sendMessage(msg) {
+    return this._js(`
+      const el = document.querySelector('div.copyable-text.selectable-text[contenteditable=true]')
+      el.innerText = '${msg.replace(/'/g, "\\'")}'
+      const event = document.createEvent('UIEvents')
+      event.initUIEvent('input', true, true, window, 1)
+      el.dispatchEvent(event)
+      eventFire(document.querySelector('button > span[data-icon="send"]').parentElement, 'click')
+    `)
   }
 
   async waitLogin() {
@@ -110,8 +147,7 @@ export default class WhatsAppClient {
     /* eslint-disable no-useless-escape */
     return this._js(`
       Array.from(document.getElementById('pane-side').firstChild.firstChild.firstChild.children)
-        .sort((a, b) => a.style.transform.match(/\\d/)[0] - b.style.transform.match(/\\d/)[0])
-        .map(e => e.firstChild.firstChild.children[1].firstChild.firstChild.innerText.slice(0, -1))
+        .(e => e.innerText.splice('\n')[0])
     `)
     /* eslint-enable no-useless-escape */
   }
