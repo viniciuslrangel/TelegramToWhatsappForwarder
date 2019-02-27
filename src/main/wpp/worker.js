@@ -39,6 +39,17 @@ ipcMain.on('Whatsapp/LIST_USERS', () => {
   })
 })
 
-export function sendMessage(msg) {
-  console.log(msg)
+export async function sendMessage(msg) {
+  const errs = []
+  /* eslint-disable */
+  for (const name of store.state.Whatsapp.activeList) {
+    try {
+      await client.selectChat(name)
+      await client.sendMessage(msg)
+    } catch (e) {
+      errs.push(name)
+    }
+  }
+  /* eslint-enable */
+  return errs
 }
