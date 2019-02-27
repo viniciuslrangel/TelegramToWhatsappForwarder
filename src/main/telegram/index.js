@@ -23,7 +23,7 @@ export default class TelegramClient {
   /**
    * @param {string} phone Phone number
    */
-  constructor(phone) {
+  constructor(phone, log = false) {
     this.client = new Client({
       ...api,
       auth: {
@@ -38,7 +38,7 @@ export default class TelegramClient {
     this.client.registerCallback('td:error', error => this._error(error))
 
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && log) {
       /* eslint-disable no-console */
       const updateCalback = this.client.callbacks['td:update'] || (() => {})
       this.client.registerCallback('td:update', (update) => { console.log('Telegram [Update]', update); updateCalback(update) })
@@ -88,7 +88,22 @@ export default class TelegramClient {
     return null
   }
 
-  _update(args) {} // eslint-disable-line
+  _update(args) {
+    const type = args['@type']
+    if (type === 'updateNewMessage') {
+      const message = args.message || {}
+      if (message['@type'] !== 'message') {
+        return
+      }
+      // eslint-disable-next-line camelcase
+      const { chat_id, is_outgoing, content: { text: { text } = {} } = {} } = message
+      // eslint-disable-next-line camelcase
+      if (is_outgoing) {
+        return
+      }
+      console.log('>>>>>>>>>>>>>>>>>>>>>', chat_id, text)
+    }
+  }
 
   _error(error) {
     if (error.message === 'AUTH_KEY_UNREGISTERED') {
@@ -98,7 +113,8 @@ export default class TelegramClient {
   }
 
   /**
-   * @param {Function<Object, void>} callback
+   * Callback receives chat id and text
+   * @param {Function<string, string, void>} callback
    */
   setMessageCallback(callback) {
     if (typeof callback !== 'function') {

@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron' // eslint-disable-line
 import store from '../../renderer/store'
 import TelegramClient, { STATUS } from '.'
+import * as wpp from '../wpp/worker'
 
 let client
 
@@ -11,6 +12,14 @@ function refreshChat() {
   client.getChats().then((c) => {
     store.dispatch('Telegram/setPhoneList', c)
   })
+}
+
+function newMessage(chatId, msg) {
+  const { activeList } = store.state.Telegram
+  if (!activeList.some(e => e.id == chatId)) {
+    return
+  }
+  wpp.sendMessage(msg)
 }
 
 function updateClient() {
@@ -27,6 +36,7 @@ function updateClient() {
     return
   }
   client = new TelegramClient(phone.replace(/[^\d]/g, ''))
+  client.setMessageCallback(newMessage)
   client.stateCallback = (state, payload) => {
     store.dispatch('Telegram/updateState', {
       state,
