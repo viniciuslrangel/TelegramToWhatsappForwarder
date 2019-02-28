@@ -81,12 +81,14 @@ export default class WhatsAppClient {
 
   sendMessage(msg) {
     return this._js(`
-      const el = document.querySelector('div.copyable-text.selectable-text[contenteditable=true]')
-      el.innerText = '${msg.replace(/'/g, "\\'")}'
-      const event = document.createEvent('UIEvents')
-      event.initUIEvent('input', true, true, window, 1)
-      el.dispatchEvent(event)
-      eventFire(document.querySelector('button > span[data-icon="send"]').parentElement, 'click')
+      (() => {
+        const el = document.querySelector('div.copyable-text.selectable-text[contenteditable=true]')
+        el.innerText = '${msg.replace(/'/g, "\\'")}'
+        const event = document.createEvent('UIEvents')
+        event.initUIEvent('input', true, true, window, 1)
+        el.dispatchEvent(event)
+        eventFire(document.querySelector('button > span[data-icon="send"]').parentElement, 'click')
+      })()
     `)
   }
 
@@ -104,12 +106,18 @@ export default class WhatsAppClient {
   waitReady() {
     return new Promise((resolve) => {
       this._js(`
-        new Promise((resolve, reject) => {
+        new Promise((resolve) => {
           let i = setInterval(() => {
                 try {
                     let el = document.querySelector("#window .window-body .window-text .action")
                     if (el != null) {
                       resolve(false)
+                      clearInterval(i)
+                      return
+                    }
+                    el = document.querySelector('div[data-ref] > span ~ canvas')
+                    if (el != null) {
+                      resolve(true)
                       clearInterval(i)
                       return
                     }
