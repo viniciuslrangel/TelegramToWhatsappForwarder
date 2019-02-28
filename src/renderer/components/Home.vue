@@ -4,6 +4,11 @@
       el-container
         el-header.header Telegram
         el-main
+          el-form
+            el-form-item
+              el-switch.switch
+              span.switch-label Selecionar Todos
+
           el-card.card(v-for="phone in phoneList" :key="phone.id" shadow="hover")
             el-switch(:active-text="phone.title" @input="(value) => leftInput(value, phone)" :value="activeList.findIndex(e => e.id == phone.id) !== -1")
 
@@ -111,6 +116,12 @@ export default {
     line-height: 60px
     font-family: 'Righteous', cursive
     font-size: 1.7em
+
+  .switch
+    padding-right: 10px
+
+  .switch-label
+    color: #fff
 
   .left
     text-align: left
