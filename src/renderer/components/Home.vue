@@ -5,14 +5,14 @@
         el-header.header Telegram
         el-main
           el-card.card(v-for="phone in phoneList" :key="phone.id" shadow="hover")
-            el-switch(:active-text="phone.title" @input="(value) => leftInput(value, phone)" :value="using[phone.id]")
+            el-switch(:active-text="phone.title" @input="(value) => leftInput(value, phone)" :value="activeList.findIndex(e => e.id == phone.id) !== -1")
 
     .split
       el-container
         el-header.header Whatsapp
         el-main
-          el-card.card(v-for="phone in wppUsers" :key="phone" shadow="hover")
-            el-switch.text(:active-text="phone" @input="(value) => rightInput(value, phone)" :value="wppUsing[phone]")
+          el-card.card(v-for="phone in wppPhoneList" :key="phone" shadow="hover")
+            el-switch.text(:active-text="phone" @input="(value) => rightInput(value, phone)" :value="wppActiveList.indexOf(phone) !== -1")
 </template>
 
 <script>
@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     leftInput(value, phone) {
-      let using = this.$store.state.Telegram.activeList.slice(0)
+      let using = this.activeList.slice(0)
       if (value) {
         using.push(phone)
       } else {
