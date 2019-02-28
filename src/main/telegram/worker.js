@@ -19,7 +19,8 @@ function newMessage(chatId, msg) {
   if (!activeList.some(e => e.id === chatId)) {
     return
   }
-  wpp.sendMessage(msg)
+  const errList = wpp.sendMessage(msg)
+  store.dispatch('Whatsapp/changeLastUserErrors', errList)
 }
 
 function updateClient() {

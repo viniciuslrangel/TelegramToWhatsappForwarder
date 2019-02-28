@@ -144,12 +144,10 @@ export default class WhatsAppClient {
 
   async listUsers() {
     await this.waitReady()
-    /* eslint-disable no-useless-escape */
     return this._js(`
       Array.from(document.getElementById('pane-side').firstChild.firstChild.firstChild.children)
-        .(e => e.innerText.splice('\n')[0])
+        .map(e => e.innerText.split('\\n')[0])
     `)
-    /* eslint-enable no-useless-escape */
   }
 }
 

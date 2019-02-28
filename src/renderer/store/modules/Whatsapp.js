@@ -1,7 +1,8 @@
 const state = {
   logged: false,
   phoneList: [],
-  activeList: []
+  activeList: [],
+  errList: []
 }
 
 const mutations = {
@@ -13,6 +14,9 @@ const mutations = {
   },
   SET_PHONE_LIST(state, phoneList) {
     state.phoneList = phoneList
+  },
+  SET_ERROR_USERS(state, errList) {
+    state.errList = errList
   }
 }
 
@@ -26,6 +30,9 @@ const actions = {
   setPhoneList({ commit }, phoneList) {
     commit('SET_PHONE_LIST', phoneList)
   },
+  changeLastUserErrors({ commit }, errList) {
+    commit('SET_ERROR_USERS', errList)
+  }
 }
 
 export default {
