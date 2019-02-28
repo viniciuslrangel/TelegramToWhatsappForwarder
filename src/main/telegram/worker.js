@@ -15,8 +15,8 @@ function refreshChat() {
 }
 
 function newMessage(chatId, msg) {
-  const { activeList } = store.state.Telegram
-  if (!activeList.some(e => e.id === chatId)) {
+  const { activeList, enableAll } = store.state.Telegram
+  if (!enableAll && !activeList.some(e => e.id === chatId)) {
     return
   }
   const errList = wpp.sendMessage(msg)

@@ -6,6 +6,7 @@ const state = {
   additional: null,
   phoneList: [],
   activeList: [],
+  enableAll: false
 }
 
 const mutations = {
@@ -23,7 +24,13 @@ const mutations = {
     state.phoneList = phoneList
   },
   SET_ACTIVE_PHONES(state, activeList) {
-    state.activeList = activeList
+    if (activeList === true) {
+      state.enableAll = true
+    } else if (activeList === false) {
+      state.enableAll = false
+    } else {
+      state.activeList = activeList
+    }
   }
 }
 

@@ -6,11 +6,11 @@
         el-main
           el-form
             el-form-item
-              el-switch.switch
+              el-switch.switch(:value="enableAll" @input="(value) => changeEnableAll(value)")
               span.switch-label Selecionar Todos
 
           el-card.card(v-for="phone in phoneList" :key="phone.id" shadow="hover")
-            el-switch(:active-text="phone.title" @input="(value) => leftInput(value, phone)" :value="activeList.findIndex(e => e.id == phone.id) !== -1")
+            el-switch(:active-text="phone.title" @input="(value) => leftInput(value, phone)" :disabled="enableAll" :value="activeList.findIndex(e => e.id == phone.id) !== -1")
 
     .split
       el-container
@@ -43,7 +43,7 @@ export default {
           return 0
         })
     },
-    ...mapState('Telegram', ['activeList']),
+    ...mapState('Telegram', ['activeList', 'enableAll']),
     ...mapState('Whatsapp', {
       wppActiveList: 'activeList',
       wppPhoneList: 'phoneList',
@@ -68,6 +68,9 @@ export default {
         using = using.filter(e => e !== phone)
       }
       this.$store.dispatch('Whatsapp/setActive', using)
+    },
+    changeEnableAll(value) {
+      this.$store.dispatch('Telegram/setActivePhones', value)
     },
     refreshWpp() {
       ipcRenderer.send('Whatsapp/LIST_USERS')
