@@ -1,6 +1,6 @@
 {
   "name": "telegram-to-whatsapp-forwarder",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "author": "Vinicius Rangel <vinicius.l.rangel@gmail.com>",
   "contributors": [
     "Vinicius Rangel <viniciuslrangel@gmail.com>",
@@ -23,7 +23,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "telegram-to-whatsapp-forwarder",
+    "productName": "Telegram To Whatsapp Forwarder",
     "appId": "telegramtowhatsappforwarder",
     "directories": {
       "output": "build"
@@ -50,7 +50,12 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.ico",
+      "extraFiles": [
+        "LIBEAY32.dll",
+        "libtdjson.dll",
+        "SSLEAY32.dll"
+      ]
     },
     "linux": {
       "icon": "build/icons"
