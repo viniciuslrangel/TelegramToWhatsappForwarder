@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron' // eslint-disable-line
+import { ipcMain, dialog } from 'electron' // eslint-disable-line
 import store from '../../renderer/store'
 import TelegramClient, { STATUS } from '.'
 import * as wpp from '../wpp/worker'
@@ -44,6 +44,7 @@ function updateClient() {
       payload
     })
   }
+  client.client.ready.catch(e => dialog.showErrorBox('Could not load native libraries', e.message))
   client.client.ready.then(refreshChat)
 }
 
