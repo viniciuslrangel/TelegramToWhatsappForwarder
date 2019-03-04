@@ -73,13 +73,24 @@ export default class WhatsAppClient {
   selectChat(title) {
     return this._js(`
       (() => {
-        for (e of Array.from(document.getElementById('pane-side').firstChild.firstChild.firstChild.children)) {
-          if (e.innerText.split('\\n')[0] === '${title.replace(/'/g, "\\'")}') {
-            eventFire(e.firstChild.firstChild, 'mousedown')
-            return
+        try {
+          const sidePane = document.getElementById('pane-side')
+          side.scrollTop = 0
+          let last = -1
+          while(side.scrollTop != last) {
+            for (e of Array.from(sidePane.firstChild.firstChild.firstChild.children)) {
+              if (e.innerText.split('\\n')[0] === '${title.replace(/'/g, "\\'")}') {
+                eventFire(e.firstChild.firstChild, 'mousedown')
+                return true
+              }
+            }
+            last = side.scrollTop
+            side.scrollTop += side.offsetHeight
           }
+        } catch(e) {
+          return e
         }
-        throw null
+        return false
       })()
     `)
   }
