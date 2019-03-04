@@ -56,8 +56,9 @@ export async function sendMessage(msg) {
   /* eslint-disable */
   for (const name of store.state.Whatsapp.activeList) {
     try {
-      await client.selectChat(name)
-      await client.sendMessage(msg)
+      if(await client.selectChat(name) === true) {
+        await client.sendMessage(msg)
+      }
     } catch (e) {
       errs.push(name)
     }
@@ -65,3 +66,9 @@ export async function sendMessage(msg) {
   /* eslint-enable */
   return errs
 }
+
+ipcMain.on('Whatsapp/SEND_MSG', (event, args) => {
+  if (typeof args === 'string') {
+    sendMessage(args)
+  }
+})
