@@ -43,10 +43,14 @@ export default {
           return 0
         })
     },
+    wppPhoneList() {
+      const { phoneList, activeList } = this.$store.state.Whatsapp
+      return activeList.concat(phoneList)
+        .filter((e, i, arr) => arr.lastIndexOf(e) === i)
+    },
     ...mapState('Telegram', ['activeList', 'enableAll']),
     ...mapState('Whatsapp', {
       wppActiveList: 'activeList',
-      wppPhoneList: 'phoneList',
       errList: 'errList'
     })
   },
