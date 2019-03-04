@@ -24,8 +24,6 @@ export default class WhatsAppClient {
       document.addEventListener("keydown", function (e) {
         if (e.which === 123) {
           require('electron').ipcRenderer.send('Whatsapp/TOOGLE_VISIBILITY')
-        } else if (e.which === 122) {
-          require('remote').getCurrentWindow().toggleDevTools();
         }
       })
       `)

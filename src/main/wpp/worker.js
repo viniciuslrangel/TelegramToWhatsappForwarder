@@ -34,6 +34,7 @@ ipcMain.on('Whatsapp/TOOGLE_VISIBILITY', () => {
     client.hide()
   } else {
     client.show()
+    client.win.openDevTools()
   }
 })
 
