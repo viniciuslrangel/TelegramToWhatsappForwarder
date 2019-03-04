@@ -21,6 +21,13 @@ export default class WhatsAppClient {
         evt.initMouseEvent(etype, true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
         el.dispatchEvent(evt)
       }
+      document.addEventListener("keydown", function (e) {
+        if (e.which === 123) {
+          require('electron').ipcRenderer.send('Whatsapp/TOOGLE_VISIBILITY')
+        } else if (e.which === 122) {
+          require('remote').getCurrentWindow().toggleDevTools();
+        }
+      })
       `)
     }
     this.win.webContents.setAudioMuted(true)

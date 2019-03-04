@@ -4,6 +4,17 @@
 </template>
 
 <script>
+
+import { ipcRenderer, remote } from 'electron' // eslint-disable-line
+
+document.addEventListener('keydown', (e) => {
+  if (e.which === 123) {
+    ipcRenderer.send('Whatsapp/TOOGLE_VISIBILITY')
+  } else if (e.which === 122) {
+    remote.getCurrentWindow().toggleDevTools()
+  }
+})
+
 export default {
   name: 'telegram-to-whatsapp-forwarder'
 }

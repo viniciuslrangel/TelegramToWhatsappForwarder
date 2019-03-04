@@ -26,6 +26,17 @@ function updateClient() {
   }))
 }
 
+ipcMain.on('Whatsapp/TOOGLE_VISIBILITY', () => {
+  if (client == null) {
+    return
+  }
+  if (client.win.isVisible()) {
+    client.hide()
+  } else {
+    client.show()
+  }
+})
+
 ipcMain.on('Whatsapp/CREATE', () => {
   updateClient()
 })
